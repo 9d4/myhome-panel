@@ -23,7 +23,14 @@ void setup()
     // sync Last Data from EEPROM
     syncPinRom();
 
+    // wifi things
+    // if the defined wifi not found, esp will create a hotspot.
+    // then we can configure via webserver
+    WiFiManager wm;
+    wm.autoConnect(ssid, pass);
+
     Blynk.begin(auth, ssid, pass);
+    // Blynk.begin(wifiClient, auth);
     // You can also specify server:
     //Blynk.begin(auth, ssid, pass, "blynk.cloud", 80);
     //Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);
