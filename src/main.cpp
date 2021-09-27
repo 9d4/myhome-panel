@@ -9,13 +9,15 @@
 #include <ArduinoJson.h>
 #include <string>
 
+bool newDevice = false;
+
 void setup()
 {
     // Debug console
     Serial.begin(115200);
 
     // EEPROM things
-    EEPROM.begin(512);
+    EEPROM.begin(1024);
 
     // setup pins mode
     setupPins();
@@ -34,6 +36,10 @@ void setup()
     // You can also specify server:
     //Blynk.begin(auth, ssid, pass, "blynk.cloud", 80);
     //Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);
+    if (newDevice)
+    {
+        doSync();
+    }
 }
 
 void loop()
@@ -115,14 +121,44 @@ byte reverseByte(byte b)
 
 void syncPinRom()
 {
-    digitalWrite(RELAY_0, reverseByte(getData(0)));
-    digitalWrite(RELAY_1, reverseByte(getData(1)));
-    digitalWrite(RELAY_2, reverseByte(getData(2)));
-    digitalWrite(RELAY_3, reverseByte(getData(3)));
-    digitalWrite(RELAY_4, reverseByte(getData(4)));
-    digitalWrite(RELAY_5, reverseByte(getData(5)));
-    digitalWrite(RELAY_6, reverseByte(getData(6)));
-    digitalWrite(RELAY_7, reverseByte(getData(7)));
-    digitalWrite(RELAY_8, reverseByte(getData(8)));
-    Serial.println("Last Pin Configuration Synced");
+    Serial.println();
+    int mark = 98;
+
+    if (EEPROM.read(1023) != mark)
+    {
+        // this is new board
+        newDevice = true;
+        Serial.println("NEW BOARD!");
+
+        // make mark, show we know that board is not new anymore
+        // by adding a number on sector 512
+        EEPROM.write(1023, mark);
+        EEPROM.write(0, 1);
+        EEPROM.write(1, 1);
+        EEPROM.write(2, 1);
+        EEPROM.write(3, 1);
+        EEPROM.write(4, 1);
+        EEPROM.write(5, 1);
+        EEPROM.write(6, 1);
+        EEPROM.write(7, 1);
+        EEPROM.write(8, 1);
+
+        if (EEPROM.commit())
+        {
+            Serial.println("written");
+        }
+    }
+    else
+    {
+        digitalWrite(RELAY_0, reverseByte(getData(0)));
+        digitalWrite(RELAY_1, reverseByte(getData(1)));
+        digitalWrite(RELAY_2, reverseByte(getData(2)));
+        digitalWrite(RELAY_3, reverseByte(getData(3)));
+        digitalWrite(RELAY_4, reverseByte(getData(4)));
+        digitalWrite(RELAY_5, reverseByte(getData(5)));
+        digitalWrite(RELAY_6, reverseByte(getData(6)));
+        digitalWrite(RELAY_7, reverseByte(getData(7)));
+        digitalWrite(RELAY_8, reverseByte(getData(8)));
+        Serial.println("Last Pin Configuration Synced");
+    }
 }

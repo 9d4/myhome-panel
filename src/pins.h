@@ -12,7 +12,7 @@
 #define RELAY_6 D6
 #define RELAY_7 D7
 #define RELAY_8 D8
-#define RELAY_9 A0
+#define INDICATOR A0
 
 void setupPins()
 {
@@ -25,7 +25,7 @@ void setupPins()
     pinMode(RELAY_6, OUTPUT);
     pinMode(RELAY_7, OUTPUT);
     pinMode(RELAY_8, OUTPUT);
-    pinMode(RELAY_9, OUTPUT);
+    pinMode(INDICATOR, OUTPUT);
 
     digitalWrite(RELAY_0, HIGH);
     digitalWrite(RELAY_1, HIGH);
