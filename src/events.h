@@ -1,23 +1,76 @@
+// TODO Don't forget to modify in case pin modifications
+
 #include "pins.h"
 #include "BlynkSimpleEsp8266.h"
 
 void onChangeLog(int virtualPin, int val);
-
 void doSync();
+
+bool serverBased = false;
+bool justBooted = true;
 
 BLYNK_CONNECTED()
 {
-    // push local to server
-    // reverse the value 0 = 1, 1 = 0
-    Blynk.virtualWrite(V0, (1 - digitalRead(RELAY_0)));
-    Blynk.virtualWrite(V1, (1 - digitalRead(RELAY_1)));
-    Blynk.virtualWrite(V2, (1 - digitalRead(RELAY_2)));
-    Blynk.virtualWrite(V3, (1 - digitalRead(RELAY_3)));
-    Blynk.virtualWrite(V4, (1 - digitalRead(RELAY_4)));
-    Blynk.virtualWrite(V5, (1 - digitalRead(RELAY_5)));
-    Blynk.virtualWrite(V6, (1 - digitalRead(RELAY_6)));
-    Blynk.virtualWrite(V7, (1 - digitalRead(RELAY_7)));
-    Blynk.virtualWrite(V8, (1 - digitalRead(RELAY_8)));
+    // When the device is connected to the server, there is two options:
+    // 1. Update the pins based on the EEPROM
+    // 2. Update the pins based on the blynk server
+    // To do that, I set virtual pin (V100). Once device connected to blynk,
+    // update that pin, then
+    // If that pin state is (1), do option number 1, else number 2.
+    // Sometimes power outage happened, to recover this condition, 
+    // On-device-boot we'll always sync local pin at first. see main.cpp
+    // WE DO THE OPERATION IN BLYNK_WRITE(V100) due to asynchronous syncing
+
+    Serial.println("Checking Server Based value....");
+    Blynk.syncVirtual(V100);
+}
+
+void setupServerLocalMode() {
+    if (serverBased && justBooted)
+    {
+        justBooted = false;
+
+        Serial.println("Using Server Based Value");
+        doSync();
+    }
+    else
+    {
+        justBooted = false;
+
+        Serial.println("Using Local Based Value");
+
+        // push local to server
+        // reverse the value 0 = 1, 1 = 0
+        // TODO Don't forget to modify in case pin modifications
+        Blynk.virtualWrite(V0, (1 - digitalRead(RELAY_0)));
+        Blynk.virtualWrite(V1, (1 - digitalRead(RELAY_1)));
+        Blynk.virtualWrite(V2, (1 - digitalRead(RELAY_2)));
+        Blynk.virtualWrite(V3, (1 - digitalRead(RELAY_3)));
+        Blynk.virtualWrite(V4, (1 - digitalRead(RELAY_4)));
+        Blynk.virtualWrite(V5, (1 - digitalRead(RELAY_5)));
+        Blynk.virtualWrite(V6, (1 - digitalRead(RELAY_6)));
+        Blynk.virtualWrite(V7, (1 - digitalRead(RELAY_7)));
+        Blynk.virtualWrite(V8, (1 - digitalRead(RELAY_8)));
+    }
+}
+
+BLYNK_WRITE(V100)
+{
+    int pinVal = param.asInt();
+
+    Serial.print("Got V100 value ");
+    Serial.println(pinVal);
+
+    if (pinVal == 1)
+    {
+        serverBased = true;
+    }
+    else
+    {
+        serverBased = false;
+    }
+
+    setupServerLocalMode();
 }
 
 BLYNK_WRITE(V0)

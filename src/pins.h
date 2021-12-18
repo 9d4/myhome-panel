@@ -1,8 +1,11 @@
+// PINS CONFIGURATION
+
 #ifndef PINS_H
 #define PINS_H
 
 #include <Arduino.h>
 
+// TODO Don't forget to modify in case pin modifications
 #define RELAY_0 D0
 #define RELAY_1 D1
 #define RELAY_2 D2
@@ -14,6 +17,10 @@
 #define RELAY_8 D8
 #define INDICATOR A0
 
+// TODO Don't forget to modify in case pin modifications
+int ROM_PINS[9] = {100, 101, 102, 103, 104, 105, 106, 107, 108};
+
+// TODO Don't forget to modify in case pin modifications
 void setupPins()
 {
     pinMode(RELAY_0, OUTPUT);

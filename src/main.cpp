@@ -9,10 +9,30 @@
 #include <ArduinoJson.h>
 #include <string>
 
+BlynkTimer timer;
+WiFiManager wm;
+
 bool newDevice = false;
+void sendTime();
+
+// what is time
+unsigned long *day = new unsigned long;
+unsigned long *hour = new unsigned long;
+unsigned long *minute = new unsigned long;
+
+// uptime
+unsigned long *days = new unsigned long;
+unsigned long *hours = new unsigned long;
+unsigned long *minutes = new unsigned long;
+unsigned long *seconds = new unsigned long;
 
 void setup()
 {
+    // time things
+    *day = 24UL * 60UL * 60UL * 1000UL;
+    *hour = 60UL * 60UL * 1000UL;
+    *minute = 60UL * 1000UL;
+
     // Debug console
     Serial.begin(115200);
 
@@ -28,7 +48,7 @@ void setup()
     // wifi things
     // if the defined wifi not found, esp will create a hotspot.
     // then we can configure via webserver
-    WiFiManager wm;
+    wm.setConfigPortalTimeout(10);
     wm.autoConnect(ssid, pass);
 
     Blynk.begin(auth, ssid, pass);
@@ -36,62 +56,94 @@ void setup()
     // You can also specify server:
     //Blynk.begin(auth, ssid, pass, "blynk.cloud", 80);
     //Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);
-    if (newDevice)
-    {
-        doSync();
-    }
+
+    // Send uptime every 5 seconds
+    timer.setInterval(5000L, sendTime);
 }
 
 void loop()
 {
     Blynk.run();
-    Blynk.syncAll();
+    timer.run();
 
     // You can inject your own code or combine it with other sketches.
     // Check other examples on how to communicate with Blynk. Remember
     // to avoid delay() function!
 }
 
-void onChangeLog(int virtualPin, int val)
+void sendTime()
+{
+    unsigned long total = millis();
+
+    *days = total / *day;
+    total -= (*days * *day);
+
+    *hours = total / *hour;
+    total -= (*hours * *hour);
+
+    *minutes = total / *minute;
+    total -= (*minutes * *minute);
+
+    unsigned long seconds = total / 1000L;
+
+    // v127 for days
+    // v126 for hours
+    // v125 for minutes
+    // v124 for seconds
+    Blynk.virtualWrite(V127, *days);
+    Blynk.virtualWrite(V126, *hours);
+    Blynk.virtualWrite(V125, *minutes);
+    Blynk.virtualWrite(V124, seconds);
+}
+
+void onChangeLog(int pin, int val)
 {
     Serial.print('V');
-    Serial.print(virtualPin);
+    Serial.print(pin);
     Serial.print(": ");
     Serial.println(val);
 
     // push to EEPROM
-    saveData(virtualPin, val);
+    saveData(ROM_PINS[pin], val);
+
     Serial.println("Value saved to EEPROM");
+    Serial.print("addr:");
+    Serial.print(pin);
+    Serial.print("  value:");
+    Serial.println(val);
 
-    // notify
-    char cond[3] = "";
+    Serial.println("");
 
-    if (val == 1)
-    {
-        cond[0] = 'O';
-        cond[1] = 'N';
-    }
-    else
-    {
-        cond[0] = 'O';
-        cond[1] = 'F';
-        cond[2] = 'F';
-    }
+    // // notify
+    // char cond[3] = "";
 
-    char desc[32] = "";
-    char changedVPin[8];
-    sprintf(changedVPin, "%d", virtualPin);
+    // if (val == 1)
+    // {
+    //     cond[0] = 'O';
+    //     cond[1] = 'N';
+    // }
+    // else
+    // {
+    //     cond[0] = 'O';
+    //     cond[1] = 'F';
+    //     cond[2] = 'F';
+    // }
 
-    strcat(desc, "Relay ");
-    strcat(desc, changedVPin);
-    strcat(desc, " :");
-    strcat(desc, cond);
+    // char desc[32] = "";
+    // char changedVPin[8];
+    // sprintf(changedVPin, "%d", virtualPin);
 
-    Blynk.logEvent("PINCHG", desc);
+    // strcat(desc, "Relay ");
+    // strcat(desc, changedVPin);
+    // strcat(desc, " :");
+    // strcat(desc, cond);
+
+    // Blynk.logEvent("PINCHG", desc);
 }
 
 void doSync()
 {
+    // TODO Don't forget to modify in case pin modifications
     Blynk.syncVirtual(V0, V1, V2, V3, V4, V5, V6, V7, V8);
 }
 
@@ -122,8 +174,10 @@ byte reverseByte(byte b)
 void syncPinRom()
 {
     Serial.println();
+    // this number is fancy number
     int mark = 98;
 
+    // if the fancy number exists, then its not a new device
     if (EEPROM.read(1023) != mark)
     {
         // this is new board
@@ -132,33 +186,37 @@ void syncPinRom()
 
         // make mark, show we know that board is not new anymore
         // by adding a number on sector 512
+        // TODO Don't forget to modify in case pin modifications
         EEPROM.write(1023, mark);
-        EEPROM.write(0, 1);
-        EEPROM.write(1, 1);
-        EEPROM.write(2, 1);
-        EEPROM.write(3, 1);
-        EEPROM.write(4, 1);
-        EEPROM.write(5, 1);
-        EEPROM.write(6, 1);
-        EEPROM.write(7, 1);
-        EEPROM.write(8, 1);
+        EEPROM.write(ROM_PINS[0], 1);
+        EEPROM.write(ROM_PINS[1], 1);
+        EEPROM.write(ROM_PINS[2], 1);
+        EEPROM.write(ROM_PINS[3], 1);
+        EEPROM.write(ROM_PINS[4], 1);
+        EEPROM.write(ROM_PINS[5], 1);
+        EEPROM.write(ROM_PINS[6], 1);
+        EEPROM.write(ROM_PINS[7], 1);
+        EEPROM.write(ROM_PINS[8], 1);
 
         if (EEPROM.commit())
         {
             Serial.println("written");
         }
+
+        doSync();
     }
     else
     {
-        digitalWrite(RELAY_0, reverseByte(getData(0)));
-        digitalWrite(RELAY_1, reverseByte(getData(1)));
-        digitalWrite(RELAY_2, reverseByte(getData(2)));
-        digitalWrite(RELAY_3, reverseByte(getData(3)));
-        digitalWrite(RELAY_4, reverseByte(getData(4)));
-        digitalWrite(RELAY_5, reverseByte(getData(5)));
-        digitalWrite(RELAY_6, reverseByte(getData(6)));
-        digitalWrite(RELAY_7, reverseByte(getData(7)));
-        digitalWrite(RELAY_8, reverseByte(getData(8)));
+        // TODO Don't forget to modify in case pin modifications
+        digitalWrite(RELAY_0, reverseByte(getData(ROM_PINS[0])));
+        digitalWrite(RELAY_1, reverseByte(getData(ROM_PINS[1])));
+        digitalWrite(RELAY_2, reverseByte(getData(ROM_PINS[2])));
+        digitalWrite(RELAY_3, reverseByte(getData(ROM_PINS[3])));
+        digitalWrite(RELAY_4, reverseByte(getData(ROM_PINS[4])));
+        digitalWrite(RELAY_5, reverseByte(getData(ROM_PINS[5])));
+        digitalWrite(RELAY_6, reverseByte(getData(ROM_PINS[6])));
+        digitalWrite(RELAY_7, reverseByte(getData(ROM_PINS[7])));
+        digitalWrite(RELAY_8, reverseByte(getData(ROM_PINS[8])));
         Serial.println("Last Pin Configuration Synced");
     }
 }
