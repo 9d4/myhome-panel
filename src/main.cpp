@@ -1,6 +1,6 @@
 #include "properties.h"
 #include "pins.h"
-#include <WiFiManager.h>
+// #include <WiFiManager.h>
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
 #include "events.h"
@@ -10,10 +10,10 @@
 #include <string>
 
 BlynkTimer timer;
-WiFiManager wm;
+// WiFiManager *wm;
 
 bool newDevice = false;
-void sendTime();
+void sendUptime();
 
 // what is time
 unsigned long *day = new unsigned long;
@@ -25,6 +25,17 @@ unsigned long *days = new unsigned long;
 unsigned long *hours = new unsigned long;
 unsigned long *minutes = new unsigned long;
 unsigned long *seconds = new unsigned long;
+
+// connect wifi at first time
+void wifiInit()
+{
+    WiFi.begin(ssid, pass); // non-blocking
+    WiFi.setAutoConnect(true);
+    WiFi.setAutoReconnect(true);
+
+    Blynk.config(auth);
+    Blynk.connect();
+}
 
 void setup()
 {
@@ -48,30 +59,48 @@ void setup()
     // wifi things
     // if the defined wifi not found, esp will create a hotspot.
     // then we can configure via webserver
-    wm.setConfigPortalTimeout(10);
-    wm.autoConnect(ssid, pass);
+    // wm.setConfigPortalTimeout(10);
+    // wm.autoConnect(ssid, pass);
 
-    Blynk.begin(auth, ssid, pass);
+    // Blynk.begin(auth, ssid, pass);
     // Blynk.begin(wifiClient, auth);
     // You can also specify server:
     //Blynk.begin(auth, ssid, pass, "blynk.cloud", 80);
     //Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);
 
+    // Add delay before connecting to server.
+    // this is important in case power outage and router is slow to boot up
+    delay(5000);
+
+    wifiInit();
+
     // Send uptime every 5 seconds
-    timer.setInterval(5000L, sendTime);
+    timer.setInterval(5000L, sendUptime);
 }
 
 void loop()
 {
-    Blynk.run();
     timer.run();
+
+    if (WiFi.isConnected())
+    {
+        Blynk.run();
+    }
+    else
+    {
+        // swap justBooted to true, so in case wifi disconnected then connected again, 
+        // device can execute BLYNK_CONNECTED event. see events.h
+        // if the value not swapped to true then the Served Based function won't work
+        // till device restarts.
+        justBooted = true;
+    }
 
     // You can inject your own code or combine it with other sketches.
     // Check other examples on how to communicate with Blynk. Remember
     // to avoid delay() function!
 }
 
-void sendTime()
+void sendUptime()
 {
     unsigned long total = millis();
 
