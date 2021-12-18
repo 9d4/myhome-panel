@@ -22,9 +22,9 @@ const int UTC_OFFSET = 7 * 3600; // in seconds
 bool saveData(int addr, byte val);
 byte getData(int addr);
 void syncPinRom();
-void sendUptime();
 void onChangeLog(int virtualPin, int val);
 void doSync();
+void printWiFiInfo(WiFiEventStationModeGotIP event);
 
 // VARS
 unsigned long *days = new unsigned long;

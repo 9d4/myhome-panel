@@ -17,6 +17,27 @@ void wifiInit()
     WiFi.setAutoReconnect(true);
 }
 
+void printWiFiInfo()
+{
+    Serial.println("-----------WIFI INFO-----------");
+    Serial.print("Connected to ");
+    Serial.println(WiFi.SSID());
+    Serial.print("Address: ");
+    Serial.println(WiFi.localIP());
+    Serial.print("Gateway: ");
+    Serial.println(WiFi.gatewayIP());
+    Serial.print("Netmask: ");
+    Serial.println(WiFi.subnetMask());
+    Serial.print("DNS IP : ");
+    Serial.println(WiFi.dnsIP());
+    Serial.print("Signal : ");
+    Serial.println(WiFi.RSSI());
+    Serial.println("-------------------------------");
+    Serial.println();
+}
+
+bool wifiDisconnected = true;
+
 void setup()
 {
     // Debug console
@@ -41,7 +62,7 @@ void setup()
     Blynk.connect();
 
     // Send uptime every 5 seconds
-    timer.setInterval(5000L, sendUptime);
+    timer.setInterval(5000L, sendTimeInfo);
 }
 
 void loop()
@@ -52,10 +73,18 @@ void loop()
 
     if (WiFi.isConnected())
     {
+        if (wifiDisconnected)
+        {
+            printWiFiInfo();
+        }
+
+        wifiDisconnected = false;
         Blynk.run();
     }
     else
     {
+        wifiDisconnected = true;
+
         // swap justBooted to true, so in case wifi disconnected then connected again,
         // device can execute BLYNK_CONNECTED event. see events.h
         // if the value not swapped to true then the Server Based function won't work
@@ -69,7 +98,7 @@ void loop()
 }
 
 // Send uptime and local time to the server
-void sendUptime()
+void sendTimeInfo()
 {
     unsigned long total = millis();
 
@@ -109,6 +138,9 @@ void sendUptime()
     Blynk.virtualWrite(V123, ntpClient.getDay());
     Blynk.virtualWrite(V122, ntpClient.getHours());
     Blynk.virtualWrite(V121, ntpClient.getMinutes());
+
+    printTime();
+    Serial.println();
 }
 
 // callback that should be called when pin changed
