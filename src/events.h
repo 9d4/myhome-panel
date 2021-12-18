@@ -19,6 +19,7 @@ BLYNK_CONNECTED()
     Blynk.syncVirtual(V100);
 }
 
+// determines whether value server based or local based
 void setupServerLocalMode() {
     if (serverBased && justBooted)
     {
