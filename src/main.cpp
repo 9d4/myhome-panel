@@ -1,9 +1,10 @@
 #include "properties.h"
 #include "pins.h"
 #include "definitions.h"
+#include "events.h"
+#include "timing.h"
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
-#include "events.h"
 #include "lib/EEPROM.h"
 #include <ArduinoJson.h>
 #include <string>
@@ -14,15 +15,6 @@ void wifiInit()
     WiFi.begin(ssid, pass); // non-blocking
     WiFi.setAutoConnect(true);
     WiFi.setAutoReconnect(true);
-
-    Blynk.config(auth);
-    Blynk.connect();
-}
-
-void timeInit()
-{
-    ntpClient.begin();
-    ntpClient.setUpdateInterval(2 * 60 * 1000); // 2 mins
 }
 
 void setup()
@@ -45,6 +37,9 @@ void setup()
     // init time things
     timeInit();
 
+    Blynk.config(auth);
+    Blynk.connect();
+
     // Send uptime every 5 seconds
     timer.setInterval(5000L, sendUptime);
 }
@@ -52,7 +47,7 @@ void setup()
 void loop()
 {
     timer.run();
-    
+
     ntpClient.update();
 
     if (WiFi.isConnected())
@@ -63,7 +58,7 @@ void loop()
     {
         // swap justBooted to true, so in case wifi disconnected then connected again,
         // device can execute BLYNK_CONNECTED event. see events.h
-        // if the value not swapped to true then the Served Based function won't work
+        // if the value not swapped to true then the Server Based function won't work
         // till device restarts.
         justBooted = true;
     }
@@ -73,7 +68,7 @@ void loop()
     // to avoid delay() function!
 }
 
-// Send uptime and local time
+// Send uptime and local time to the server
 void sendUptime()
 {
     unsigned long total = millis();
@@ -116,6 +111,8 @@ void sendUptime()
     Blynk.virtualWrite(V121, ntpClient.getMinutes());
 }
 
+// callback that should be called when pin changed
+// see events.h
 void onChangeLog(int pin, int val)
 {
     Serial.print('V');
@@ -133,40 +130,19 @@ void onChangeLog(int pin, int val)
     Serial.println(val);
 
     Serial.println("");
-
-    // // notify
-    // char cond[3] = "";
-
-    // if (val == 1)
-    // {
-    //     cond[0] = 'O';
-    //     cond[1] = 'N';
-    // }
-    // else
-    // {
-    //     cond[0] = 'O';
-    //     cond[1] = 'F';
-    //     cond[2] = 'F';
-    // }
-
-    // char desc[32] = "";
-    // char changedVPin[8];
-    // sprintf(changedVPin, "%d", virtualPin);
-
-    // strcat(desc, "Relay ");
-    // strcat(desc, changedVPin);
-    // strcat(desc, " :");
-    // strcat(desc, cond);
-
-    // Blynk.logEvent("PINCHG", desc);
 }
 
+// Request server to send virtualPin value
 void doSync()
 {
     // TODO Don't forget to modify in case pin modifications
     Blynk.syncVirtual(V0, V1, V2, V3, V4, V5, V6, V7, V8);
 }
 
+// equivalent doSync();
+void doVirtualSync() { return doSync(); };
+
+// Save data to EEPROM
 bool saveData(int addr, byte val)
 {
     EEPROM.write(addr, val);
@@ -174,11 +150,13 @@ bool saveData(int addr, byte val)
     return EEPROM.commit();
 }
 
+// Read data from EEPROM
 byte getData(int addr)
 {
     return EEPROM.read(addr);
 }
 
+// Flip between 0 and 1
 byte reverseByte(byte b)
 {
     if (b == 0)
@@ -191,6 +169,7 @@ byte reverseByte(byte b)
     }
 }
 
+// Sync the pin with value from the EEPROM
 void syncPinRom()
 {
     Serial.println();
