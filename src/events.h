@@ -1,13 +1,7 @@
 // TODO Don't forget to modify in case pin modifications
 
-#include "pins.h"
+// #include "pins.h"
 #include "BlynkSimpleEsp8266.h"
-
-void onChangeLog(int virtualPin, int val);
-void doSync();
-
-bool serverBased = false;
-bool justBooted = true;
 
 BLYNK_CONNECTED()
 {

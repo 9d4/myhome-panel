@@ -1,30 +1,12 @@
 #include "properties.h"
 #include "pins.h"
-// #include <WiFiManager.h>
+#include "definitions.h"
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
 #include "events.h"
-#include "data.h"
 #include "lib/EEPROM.h"
 #include <ArduinoJson.h>
 #include <string>
-
-BlynkTimer timer;
-// WiFiManager *wm;
-
-bool newDevice = false;
-void sendUptime();
-
-// what is time
-unsigned long *day = new unsigned long;
-unsigned long *hour = new unsigned long;
-unsigned long *minute = new unsigned long;
-
-// uptime
-unsigned long *days = new unsigned long;
-unsigned long *hours = new unsigned long;
-unsigned long *minutes = new unsigned long;
-unsigned long *seconds = new unsigned long;
 
 // connect wifi at first time
 void wifiInit()
@@ -39,11 +21,6 @@ void wifiInit()
 
 void setup()
 {
-    // time things
-    *day = 24UL * 60UL * 60UL * 1000UL;
-    *hour = 60UL * 60UL * 1000UL;
-    *minute = 60UL * 1000UL;
-
     // Debug console
     Serial.begin(115200);
 
@@ -56,23 +33,11 @@ void setup()
     // sync Last Data from EEPROM
     syncPinRom();
 
-    // wifi things
-    // if the defined wifi not found, esp will create a hotspot.
-    // then we can configure via webserver
-    // wm.setConfigPortalTimeout(10);
-    // wm.autoConnect(ssid, pass);
-
-    // Blynk.begin(auth, ssid, pass);
-    // Blynk.begin(wifiClient, auth);
-    // You can also specify server:
-    //Blynk.begin(auth, ssid, pass, "blynk.cloud", 80);
-    //Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);
-
-    // Add delay before connecting to server.
-    // this is important in case power outage and router is slow to boot up
-    delay(5000);
-
+    // init the wifi
     wifiInit();
+
+    // connect to the ntp server
+    ntpClient.begin();
 
     // Send uptime every 5 seconds
     timer.setInterval(5000L, sendUptime);
@@ -100,25 +65,43 @@ void loop()
     // to avoid delay() function!
 }
 
+
+// Send uptime and local time
 void sendUptime()
 {
+    Serial.println(ntpClient.getDay());
+
     unsigned long total = millis();
 
-    *days = total / *day;
-    total -= (*days * *day);
+    *days = total / DAY;
+    total -= (*days * DAY);
 
-    *hours = total / *hour;
-    total -= (*hours * *hour);
+    *hours = total / HOUR;
+    total -= (*hours * HOUR);
 
-    *minutes = total / *minute;
-    total -= (*minutes * *minute);
+    *minutes = total / MINUTE;
+    total -= (*minutes * MINUTE);
 
-    unsigned long seconds = total / 1000L;
+    unsigned long seconds = total / SECOND;
 
     // v127 for days
     // v126 for hours
     // v125 for minutes
     // v124 for seconds
+    Blynk.virtualWrite(V127, *days);
+    Blynk.virtualWrite(V126, *hours);
+    Blynk.virtualWrite(V125, *minutes);
+    Blynk.virtualWrite(V124, seconds);
+
+    Serial.print("[uptime]: ");
+    Serial.print(*days); Serial.print("d ");
+    Serial.print(*hours); Serial.print("h ");
+    Serial.print(*minutes); Serial.print("m ");
+    Serial.print(seconds); Serial.println("s ");
+
+    // v123 for day
+    // v122 for hour
+    // v121 for minute
     Blynk.virtualWrite(V127, *days);
     Blynk.virtualWrite(V126, *hours);
     Blynk.virtualWrite(V125, *minutes);
