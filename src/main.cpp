@@ -135,9 +135,11 @@ void sendTimeInfo()
     // v123 for day
     // v122 for hour
     // v121 for minute
+    // v120 for second
     Blynk.virtualWrite(V123, ntpClient.getDay());
     Blynk.virtualWrite(V122, ntpClient.getHours());
     Blynk.virtualWrite(V121, ntpClient.getMinutes());
+    Blynk.virtualWrite(V120, ntpClient.getSeconds());
 
     printTime();
     Serial.println();

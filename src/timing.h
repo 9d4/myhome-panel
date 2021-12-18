@@ -16,7 +16,9 @@ void printTime()
     Serial.print("[time]: ");
     Serial.print(ntpClient.getHours());
     Serial.print(":");
-    Serial.println(ntpClient.getMinutes());
+    Serial.print(ntpClient.getMinutes());
+    Serial.print(":");
+    Serial.println(ntpClient.getSeconds());
 }
 
 #endif

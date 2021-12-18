@@ -31,6 +31,7 @@ unsigned long *days = new unsigned long;
 unsigned long *hours = new unsigned long;
 unsigned long *minutes = new unsigned long;
 unsigned long *seconds = new unsigned long;
+u_int16_t DATETIME[4] = {0, 0, 0, 60U}; // Local time DAY;HOURS;MINUTES;SECONDS
 bool newDevice = false;
 bool serverBased = false;
 bool justBooted = true;
