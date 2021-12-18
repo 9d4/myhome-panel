@@ -19,6 +19,12 @@ void wifiInit()
     Blynk.connect();
 }
 
+void timeInit()
+{
+    ntpClient.begin();
+    ntpClient.setUpdateInterval(2 * 60 * 1000); // 2 mins
+}
+
 void setup()
 {
     // Debug console
@@ -36,8 +42,8 @@ void setup()
     // init the wifi
     wifiInit();
 
-    // connect to the ntp server
-    ntpClient.begin();
+    // init time things
+    timeInit();
 
     // Send uptime every 5 seconds
     timer.setInterval(5000L, sendUptime);
@@ -46,6 +52,8 @@ void setup()
 void loop()
 {
     timer.run();
+    
+    ntpClient.update();
 
     if (WiFi.isConnected())
     {
@@ -53,7 +61,7 @@ void loop()
     }
     else
     {
-        // swap justBooted to true, so in case wifi disconnected then connected again, 
+        // swap justBooted to true, so in case wifi disconnected then connected again,
         // device can execute BLYNK_CONNECTED event. see events.h
         // if the value not swapped to true then the Served Based function won't work
         // till device restarts.
@@ -65,12 +73,9 @@ void loop()
     // to avoid delay() function!
 }
 
-
 // Send uptime and local time
 void sendUptime()
 {
-    Serial.println(ntpClient.getDay());
-
     unsigned long total = millis();
 
     *days = total / DAY;
@@ -94,18 +99,21 @@ void sendUptime()
     Blynk.virtualWrite(V124, seconds);
 
     Serial.print("[uptime]: ");
-    Serial.print(*days); Serial.print("d ");
-    Serial.print(*hours); Serial.print("h ");
-    Serial.print(*minutes); Serial.print("m ");
-    Serial.print(seconds); Serial.println("s ");
+    Serial.print(*days);
+    Serial.print("d ");
+    Serial.print(*hours);
+    Serial.print("h ");
+    Serial.print(*minutes);
+    Serial.print("m ");
+    Serial.print(seconds);
+    Serial.println("s ");
 
     // v123 for day
     // v122 for hour
     // v121 for minute
-    Blynk.virtualWrite(V127, *days);
-    Blynk.virtualWrite(V126, *hours);
-    Blynk.virtualWrite(V125, *minutes);
-    Blynk.virtualWrite(V124, seconds);
+    Blynk.virtualWrite(V123, ntpClient.getDay());
+    Blynk.virtualWrite(V122, ntpClient.getHours());
+    Blynk.virtualWrite(V121, ntpClient.getMinutes());
 }
 
 void onChangeLog(int pin, int val)

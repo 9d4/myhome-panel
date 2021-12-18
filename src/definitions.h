@@ -14,7 +14,9 @@ const unsigned long DAY = 24UL * 60UL * 60UL * 1000UL;
 const unsigned long HOUR = 60UL * 60UL * 1000UL;
 const unsigned long MINUTE = 60UL * 1000UL;
 const unsigned long SECOND = 1000UL;
+char daysOfWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 const char NTP_SERVER[] = "0.id.pool.ntp.org";
+const int UTC_OFFSET = 7 * 3600; // in seconds
 
 // FUNCTIONS
 bool saveData(int addr, byte val);
@@ -36,6 +38,6 @@ bool justBooted = true;
 // INSTANCE
 BlynkTimer timer;
 WiFiUDP wifiUdp;
-NTPClient ntpClient(wifiUdp, NTP_SERVER);
+NTPClient ntpClient(wifiUdp, NTP_SERVER, UTC_OFFSET);
 
 #endif
