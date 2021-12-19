@@ -11,6 +11,10 @@ void timeInit()
     ntpClient.setUpdateInterval(2 * 60 * 1000); // 1 mins
 }
 
+void timeUpdate() {
+    ntpClient.forceUpdate();
+}
+
 void printTime()
 {
     Serial.print("[time]: ");

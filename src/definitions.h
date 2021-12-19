@@ -17,6 +17,7 @@ const unsigned long SECOND = 1000UL;
 char daysOfWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 const char NTP_SERVER[] = "0.id.pool.ntp.org";
 const int UTC_OFFSET = 7 * 3600; // in seconds
+const char MESSAGE_EVENT[] = "message";
 
 // FUNCTIONS
 bool saveData(int addr, byte val);

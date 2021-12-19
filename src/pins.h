@@ -15,7 +15,7 @@
 #define RELAY_6 D6
 #define RELAY_7 D7
 #define RELAY_8 D8
-#define INDICATOR A0
+#define SIGNAL A0
 
 // TODO Don't forget to modify in case pin modifications
 int ROM_PINS[9] = {100, 101, 102, 103, 104, 105, 106, 107, 108};
@@ -32,7 +32,7 @@ void setupPins()
     pinMode(RELAY_6, OUTPUT);
     pinMode(RELAY_7, OUTPUT);
     pinMode(RELAY_8, OUTPUT);
-    pinMode(INDICATOR, OUTPUT);
+    pinMode(SIGNAL, INPUT);
 
     digitalWrite(RELAY_0, HIGH);
     digitalWrite(RELAY_1, HIGH);

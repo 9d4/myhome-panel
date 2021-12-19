@@ -1,0 +1,70 @@
+-I/home/traper/iot/My Home Blynk/include
+-I/home/traper/iot/My Home Blynk/src
+-I/home/traper/iot/My Home Blynk/.pio/libdeps/nodemcu/NTPClient
+-I/home/traper/iot/My Home Blynk/.pio/libdeps/nodemcu/ArduinoJson/src
+-I/home/traper/iot/My Home Blynk/.pio/libdeps/nodemcu/ESPAsyncTCP-esphome/src
+-I/home/traper/iot/My Home Blynk/.pio/libdeps/nodemcu/Blynk/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/cores/esp8266
+-I/home/traper/.platformio/packages/toolchain-xtensa/include
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/tools/sdk/lwip2/include
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/variants/nodemcu
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SdFat/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/Ethernet/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/SD/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/SDFS/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/SPI
+-I/home/traper/iot/My Home Blynk/.pio/libdeps/nodemcu/WiFiManager
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/ArduinoOTA
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/EEPROM
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266AVRISP/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPClient/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266LLMNR
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266NetBIOS
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SSDP
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFiMesh/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266httpUpdate/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266mDNS/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/GDBStub/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/Hash/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/I2S/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/Netdump/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/SPISlave/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/Servo/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/SoftwareSerial/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/TFT_Touch_Shield_V2
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/Ticker/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/Wire
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/esp8266/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_PPP/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_enc28j60/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_w5100/src
+-I/home/traper/.platformio/packages/framework-arduinoespressif8266/libraries/lwIP_w5500/src
+-I/home/traper/.platformio/packages/toolchain-xtensa/xtensa-lx106-elf/include/c++/10.3.0
+-I/home/traper/.platformio/packages/toolchain-xtensa/xtensa-lx106-elf/include/c++/10.3.0/xtensa-lx106-elf
+-I/home/traper/.platformio/packages/toolchain-xtensa/lib/gcc/xtensa-lx106-elf/10.3.0/include-fixed
+-I/home/traper/.platformio/packages/toolchain-xtensa/lib/gcc/xtensa-lx106-elf/10.3.0/include
+-I/home/traper/.platformio/packages/toolchain-xtensa/xtensa-lx106-elf/include
+-DPLATFORMIO=50204
+-DESP8266
+-DARDUINO_ARCH_ESP8266
+-DARDUINO_ESP8266_NODEMCU
+-DF_CPU=80000000L
+-D__ets__
+-DICACHE_FLASH
+-DARDUINO=10805
+-DARDUINO_BOARD="PLATFORMIO_NODEMCU"
+-DFLASHMODE_QIO
+-DLWIP_OPEN_SRC
+-DNONOSDK22x_190703=1
+-DTCP_MSS=536
+-DLWIP_FEATURES=1
+-DLWIP_IPV6=0
+-DVTABLES_IN_FLASH
+-DMMU_IRAM_SIZE=0x8000
+-DMMU_ICACHE_SIZE=0x8000

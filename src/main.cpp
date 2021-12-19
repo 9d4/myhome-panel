@@ -8,6 +8,7 @@
 #include "lib/EEPROM.h"
 #include <ArduinoJson.h>
 #include <string>
+#include "scheduler.h"
 
 // connect wifi at first time
 void wifiInit()
@@ -37,6 +38,19 @@ void printWiFiInfo()
 }
 
 bool wifiDisconnected = true;
+
+void testStart()
+{
+    Serial.println("Scheduler triggered the startF");
+}
+void testStop()
+{
+    Serial.println("Scheduler triggered the stopF");
+}
+void testBetween()
+{
+    Serial.println("Scheduler triggered the Between");
+}
 
 void setup()
 {
@@ -69,13 +83,12 @@ void loop()
 {
     timer.run();
 
-    ntpClient.update();
-
     if (WiFi.isConnected())
     {
         if (wifiDisconnected)
         {
             printWiFiInfo();
+            Blynk.logEvent(MESSAGE_EVENT, "Connected Successfully!");
         }
 
         wifiDisconnected = false;
@@ -100,6 +113,8 @@ void loop()
 // Send uptime and local time to the server
 void sendTimeInfo()
 {
+    timeUpdate();
+
     unsigned long total = millis();
 
     *days = total / DAY;
