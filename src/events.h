@@ -71,7 +71,7 @@ BLYNK_WRITE(V100)
 BLYNK_WRITE(V0)
 {
     int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
-    onChangeLog(V0, pinValue);
+    onPinChangeLog(V0, pinValue);
 
     switch (pinValue)
     {
@@ -87,7 +87,7 @@ BLYNK_WRITE(V0)
 BLYNK_WRITE(V1)
 {
     int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
-    onChangeLog(V1, pinValue);
+    onPinChangeLog(V1, pinValue);
 
     switch (pinValue)
     {
@@ -103,7 +103,7 @@ BLYNK_WRITE(V1)
 BLYNK_WRITE(V2)
 {
     int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
-    onChangeLog(V2, pinValue);
+    onPinChangeLog(V2, pinValue);
 
     switch (pinValue)
     {
@@ -119,7 +119,7 @@ BLYNK_WRITE(V2)
 BLYNK_WRITE(V3)
 {
     int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
-    onChangeLog(V3, pinValue);
+    onPinChangeLog(V3, pinValue);
 
     switch (pinValue)
     {
@@ -135,7 +135,7 @@ BLYNK_WRITE(V3)
 BLYNK_WRITE(V4)
 {
     int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
-    onChangeLog(V4, pinValue);
+    onPinChangeLog(V4, pinValue);
 
     switch (pinValue)
     {
@@ -151,7 +151,7 @@ BLYNK_WRITE(V4)
 BLYNK_WRITE(V5)
 {
     int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
-    onChangeLog(V5, pinValue);
+    onPinChangeLog(V5, pinValue);
 
     switch (pinValue)
     {
@@ -167,7 +167,7 @@ BLYNK_WRITE(V5)
 BLYNK_WRITE(V6)
 {
     int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
-    onChangeLog(V6, pinValue);
+    onPinChangeLog(V6, pinValue);
 
     switch (pinValue)
     {
@@ -183,7 +183,7 @@ BLYNK_WRITE(V6)
 BLYNK_WRITE(V7)
 {
     int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
-    onChangeLog(V7, pinValue);
+    onPinChangeLog(V7, pinValue);
 
     switch (pinValue)
     {
@@ -199,7 +199,7 @@ BLYNK_WRITE(V7)
 BLYNK_WRITE(V8)
 {
     int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
-    onChangeLog(V8, pinValue);
+    onPinChangeLog(V8, pinValue);
 
     switch (pinValue)
     {

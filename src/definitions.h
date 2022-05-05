@@ -22,8 +22,8 @@ const char MESSAGE_EVENT[] = "message";
 // FUNCTIONS
 bool saveData(int addr, byte val);
 byte getData(int addr);
-void syncPinRom();
-void onChangeLog(int virtualPin, int val);
+void syncPinEEPROM();
+void onPinChangeLog(int virtualPin, int val);
 void doSync();
 void printWiFiInfo(WiFiEventStationModeGotIP event);
 
@@ -32,7 +32,6 @@ unsigned long *days = new unsigned long;
 unsigned long *hours = new unsigned long;
 unsigned long *minutes = new unsigned long;
 unsigned long *seconds = new unsigned long;
-u_int16_t DATETIME[4] = {0, 0, 0, 60U}; // Local time DAY;HOURS;MINUTES;SECONDS
 bool newDevice = false;
 bool serverBased = false;
 bool justBooted = true;

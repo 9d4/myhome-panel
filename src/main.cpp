@@ -9,6 +9,8 @@
 #include <ArduinoJson.h>
 #include <string>
 #include "scheduler.h"
+#include "relay.h"
+#include <Wire.h>
 
 // connect wifi at first time
 void wifiInit()
@@ -52,10 +54,14 @@ void testBetween()
     Serial.println("Scheduler triggered the Between");
 }
 
+Relay r1 = {0, 0, 32, 10, V0, 100};
+
 void setup()
 {
     // Debug console
     Serial.begin(115200);
+
+    Wire.begin(D1, D2);
 
     // EEPROM things
     EEPROM.begin(1024);
@@ -64,7 +70,7 @@ void setup()
     setupPins();
 
     // sync Last Data from EEPROM
-    syncPinRom();
+    syncPinEEPROM();
 
     // init the wifi
     wifiInit();
@@ -77,6 +83,8 @@ void setup()
 
     // Send uptime every 5 seconds
     timer.setInterval(5000L, sendTimeInfo);
+    
+    relay_toggle(&r1);
 }
 
 void loop()
@@ -162,7 +170,7 @@ void sendTimeInfo()
 
 // callback that should be called when pin changed
 // see events.h
-void onChangeLog(int pin, int val)
+void onPinChangeLog(int pin, int val)
 {
     Serial.print('V');
     Serial.print(pin);
@@ -219,7 +227,7 @@ byte reverseByte(byte b)
 }
 
 // Sync the pin with value from the EEPROM
-void syncPinRom()
+void syncPinEEPROM()
 {
     Serial.println();
     // this number is fancy number
