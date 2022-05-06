@@ -54,7 +54,7 @@ void testBetween()
     Serial.println("Scheduler triggered the Between");
 }
 
-Relay r1 = {0, 0, 32, 10, V0, 100};
+Relay r1 = {0, 0, 32, 8, V0, 100};
 
 void setup()
 {
@@ -82,9 +82,7 @@ void setup()
     Blynk.connect();
 
     // Send uptime every 5 seconds
-    timer.setInterval(5000L, sendTimeInfo);
-    
-    relay_toggle(&r1);
+    timer.setInterval(5000L, sendTimeInfo);    
 }
 
 void loop()
@@ -116,6 +114,7 @@ void loop()
     // You can inject your own code or combine it with other sketches.
     // Check other examples on how to communicate with Blynk. Remember
     // to avoid delay() function!
+    relay_toggle(&r1);
 }
 
 // Send uptime and local time to the server
@@ -264,15 +263,6 @@ void syncPinEEPROM()
     else
     {
         // TODO Don't forget to modify in case pin modifications
-        digitalWrite(RELAY_0, reverseByte(getData(ROM_PINS[0])));
-        digitalWrite(RELAY_1, reverseByte(getData(ROM_PINS[1])));
-        digitalWrite(RELAY_2, reverseByte(getData(ROM_PINS[2])));
-        digitalWrite(RELAY_3, reverseByte(getData(ROM_PINS[3])));
-        digitalWrite(RELAY_4, reverseByte(getData(ROM_PINS[4])));
-        digitalWrite(RELAY_5, reverseByte(getData(ROM_PINS[5])));
-        digitalWrite(RELAY_6, reverseByte(getData(ROM_PINS[6])));
-        digitalWrite(RELAY_7, reverseByte(getData(ROM_PINS[7])));
-        digitalWrite(RELAY_8, reverseByte(getData(ROM_PINS[8])));
         Serial.println("Last Pin Configuration Synced");
     }
 }

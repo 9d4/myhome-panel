@@ -23,10 +23,15 @@ void relay_toggle(Relay *relay) {
         relay->state = 0;
     }
 
+    Serial.println("sending data to actuator");
+    // print relay struct
+
     Wire.beginTransmission(relay->actuator_addr);
     Wire.write(relay->actuator_pin);
     Wire.write(relay->state);
     Wire.endTransmission();
+
+    Serial.println("sent!\n");
 }
 
 
