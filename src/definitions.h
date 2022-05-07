@@ -7,6 +7,7 @@
 #include <BlynkSimpleEsp8266.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
+#include "relay.h"
 
 // CONSTANTS
 // what is time
@@ -26,6 +27,7 @@ void syncPinEEPROM();
 void onPinChangeLog(int virtualPin, int val);
 void doSync();
 void printWiFiInfo(WiFiEventStationModeGotIP event);
+void actuate_relays(int virtual_pin, byte state);
 
 // VARS
 unsigned long *days = new unsigned long;
@@ -40,5 +42,16 @@ bool justBooted = true;
 BlynkTimer timer;
 WiFiUDP wifiUdp;
 NTPClient ntpClient(wifiUdp, NTP_SERVER, UTC_OFFSET);
+Relay r0 = {0, 0, 32, 8, V0, 100};
+Relay r1 = {1, 0, 1, 8, V1, 101};
+Relay r2 = {2, 0, 2, 8, V2, 102};
+Relay r3 = {3, 0, 9, 8, V3, 103};
+Relay r4 = {4, 0, 10, 8, V4, 104};
+Relay r5 = {5, 0, 11, 8, V5, 105};
+Relay r6 = {6, 0, 12, 8, V6, 106};
+Relay r7 = {7, 0, 26, 8, V7, 107};
+
+// save r1 to r7 to array
+Relay *relays[8] = {&r0, &r1, &r2, &r3, &r4, &r5, &r6, &r7};
 
 #endif

@@ -4,9 +4,7 @@
 #include "events.h"
 #include "timing.h"
 #include <ESP8266WiFi.h>
-#include <BlynkSimpleEsp8266.h>
 #include "lib/EEPROM.h"
-#include <ArduinoJson.h>
 #include <string>
 #include "scheduler.h"
 #include "relay.h"
@@ -54,7 +52,6 @@ void testBetween()
     Serial.println("Scheduler triggered the Between");
 }
 
-Relay r1 = {0, 0, 32, 8, V0, 100};
 
 void setup()
 {
@@ -114,7 +111,6 @@ void loop()
     // You can inject your own code or combine it with other sketches.
     // Check other examples on how to communicate with Blynk. Remember
     // to avoid delay() function!
-    relay_toggle(&r1);
 }
 
 // Send uptime and local time to the server
@@ -171,6 +167,9 @@ void sendTimeInfo()
 // see events.h
 void onPinChangeLog(int pin, int val)
 {
+    // convert val to byte
+    byte valByte = val;
+    actuate_relays(pin, valByte);
     Serial.print('V');
     Serial.print(pin);
     Serial.print(": ");
@@ -264,5 +263,18 @@ void syncPinEEPROM()
     {
         // TODO Don't forget to modify in case pin modifications
         Serial.println("Last Pin Configuration Synced");
+    }
+}
+
+// actuate the relays
+void actuate_relays(int virtual_pin, byte state) {
+    // iterate array named *relays
+    for (int i = 0; i < sizeof(*relays); i++) {
+        // if the virtual_pin is the same as the relay
+        if (virtual_pin == relays[i]->virtual_pin) {
+            // print
+            Serial.print("Actuating relay ");
+            Serial.print(relays[i]->actuator_pin);
+        }
     }
 }
