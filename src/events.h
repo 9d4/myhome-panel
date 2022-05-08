@@ -112,3 +112,8 @@ BLYNK_WRITE(V8)
     int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
     onPinChangeLog(V8, pinValue);
 }
+
+BLYNK_WRITE(V15) {
+    int pinValue = param.asInt(); // assigning incoming value from pin V1 to a variable
+    onPinChangeLog(V15, pinValue);
+}

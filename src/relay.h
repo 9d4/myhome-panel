@@ -13,22 +13,19 @@ struct Relay {
     int eeprom_addr;        // eeprom address of the relay state
 };
 
-// send state to the actuator
-void relay_toggle(Relay *relay) {
-    if (relay->state == 0) {
-        relay->state = 1;
-    } 
-    
-    if (relay->state > 0) {
-        relay->state = 0;
-    }
+const byte header_start = 0x37;
+const byte header_end = 0x38;
 
+// send state to the actuator
+void relay_actuate(Relay *relay) {
     Serial.println("sending data to actuator");
     // print relay struct
 
     Wire.beginTransmission(relay->actuator_addr);
+    Wire.write(header_start);
     Wire.write(relay->actuator_pin);
     Wire.write(relay->state);
+    Wire.write(header_end);
     Wire.endTransmission();
 
     Serial.println("sent!\n");

@@ -52,6 +52,7 @@ Relay r6 = {6, 0, 12, 8, V6, 106};
 Relay r7 = {7, 0, 26, 8, V7, 107};
 
 // save r1 to r7 to array
-Relay *relays[8] = {&r0, &r1, &r2, &r3, &r4, &r5, &r6, &r7};
+const byte relays_length = 8;
+struct Relay relays[relays_length] = {r0, r1, r2, r3, r4, r5, r6, r7};
 
 #endif

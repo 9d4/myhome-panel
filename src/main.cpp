@@ -268,13 +268,17 @@ void syncPinEEPROM()
 
 // actuate the relays
 void actuate_relays(int virtual_pin, byte state) {
+    Relay *target = NULL;
+
     // iterate array named *relays
-    for (int i = 0; i < sizeof(*relays); i++) {
-        // if the virtual_pin is the same as the relay
-        if (virtual_pin == relays[i]->virtual_pin) {
-            // print
-            Serial.print("Actuating relay ");
-            Serial.print(relays[i]->actuator_pin);
+    for (int i = 0; i < relays_length; i++) {
+        if (relays[i].virtual_pin == virtual_pin) {
+            target = &relays[i];
         }
+    }
+
+    if (target != NULL) { 
+        target->state = state;
+        relay_actuate(target);
     }
 }
