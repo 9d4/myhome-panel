@@ -12,9 +12,16 @@
 // connect wifi at first time
 void wifiInit()
 {
+    Serial.println("Wifi is connecting...");
     WiFi.begin(ssid, pass); // non-blocking
     WiFi.setAutoConnect(true);
     WiFi.setAutoReconnect(true);
+
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(5000);
+        wifiInit();
+    }
 }
 
 void printWiFiInfo()
@@ -40,9 +47,6 @@ bool wifiDisconnected = true;
 
 void setup()
 {
-    // Debug console
-    Serial.begin(115200);
-
     // EEPROM things
     EEPROM.begin(1024);
 
@@ -52,23 +56,23 @@ void setup()
     // sync Last Data from EEPROM
     syncPinRom();
 
+    // Debug console
+    Serial.begin(115200);
+    delay(500);
+
     // init the wifi
     wifiInit();
+    printWiFiInfo();
 
     // init time things
     timeInit();
 
     Blynk.config(auth);
     Blynk.connect();
-
-    // Send uptime every 5 seconds
-    timer.setInterval(5000L, sendTimeInfo);
 }
 
 void loop()
 {
-    timer.run();
-
     ntpClient.update();
 
     if (WiFi.isConnected())
@@ -90,59 +94,12 @@ void loop()
         // if the value not swapped to true then the Server Based function won't work
         // till device restarts.
         justBooted = true;
+        wifiInit();
     }
 
     // You can inject your own code or combine it with other sketches.
     // Check other examples on how to communicate with Blynk. Remember
     // to avoid delay() function!
-}
-
-// Send uptime and local time to the server
-void sendTimeInfo()
-{
-    unsigned long total = millis();
-
-    *days = total / DAY;
-    total -= (*days * DAY);
-
-    *hours = total / HOUR;
-    total -= (*hours * HOUR);
-
-    *minutes = total / MINUTE;
-    total -= (*minutes * MINUTE);
-
-    unsigned long seconds = total / SECOND;
-
-    // v127 for days
-    // v126 for hours
-    // v125 for minutes
-    // v124 for seconds
-    Blynk.virtualWrite(V127, *days);
-    Blynk.virtualWrite(V126, *hours);
-    Blynk.virtualWrite(V125, *minutes);
-    Blynk.virtualWrite(V124, seconds);
-
-    Serial.print("[uptime]: ");
-    Serial.print(*days);
-    Serial.print("d ");
-    Serial.print(*hours);
-    Serial.print("h ");
-    Serial.print(*minutes);
-    Serial.print("m ");
-    Serial.print(seconds);
-    Serial.println("s ");
-
-    // v123 for day
-    // v122 for hour
-    // v121 for minute
-    // v120 for second
-    Blynk.virtualWrite(V123, ntpClient.getDay());
-    Blynk.virtualWrite(V122, ntpClient.getHours());
-    Blynk.virtualWrite(V121, ntpClient.getMinutes());
-    Blynk.virtualWrite(V120, ntpClient.getSeconds());
-
-    printTime();
-    Serial.println();
 }
 
 // callback that should be called when pin changed
